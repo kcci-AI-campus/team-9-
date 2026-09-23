@@ -64,7 +64,7 @@ product_price = {
 IMG_SIZE = 320
 
 # 상품 인식 최소 신뢰도
-CONF_TH = 0.4
+CONF_TH = 0.6
 
 # 상품을 몇 초 동안 유지해야 장바구니에 추가할지
 STABLE_TIME = 2.0
