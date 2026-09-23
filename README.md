@@ -1,7 +1,2 @@
 # Team9
 team 9 - 상품인식 무인 계산대
-*변화테스트 1
-##
-아제제이야
-###
-dkpowodkwqowk
