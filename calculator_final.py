@@ -3,7 +3,7 @@ import numpy as np
 import time
 import ai_edge_litert.interpreter as tflite
 
-
+##변경사항1
 # =========================================================
 # 1. MODEL
 # =========================================================
