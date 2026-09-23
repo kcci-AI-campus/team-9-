@@ -1750,6 +1750,7 @@ while True:
             cart_message_product = removed_product
 
             cart_message_time = time.time()
+        
 
 
 # =========================================================
