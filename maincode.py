@@ -257,7 +257,7 @@ def processImage(frame):
 
 
 # =========================================================
-# 7. 가장 높은 확률의 상품 찾기
+# 7. 클래스 판단 로직
 # =========================================================
 
 def getBestProduct(output):
@@ -317,7 +317,7 @@ def getBestProduct(output):
             )
 
     # 신뢰도가 기준보다 낮으면 인식하지 않음
-    if best_conf < CONF_TH:
+    if best_conf < CONF_TH or best_class == 8 or best_class not in product_name:
 
         return None, None, 0
 
@@ -1563,35 +1563,23 @@ while True:
 
     if current_product is not None:
 
-        # 새로운 상품이 인식된 경우
+        # 이전 프레임과 다른 상품이 들어오면 타이머 리셋
         if candidate_product != current_product:
-
             candidate_product = current_product
-
             candidate_start_time = time.time()
 
-        # 같은 상품이 계속 인식되고 있는 경우
-        elif (
-            time.time() -
-            candidate_start_time
-            >= STABLE_TIME
-        ):
-
-            # 아직 추가하지 않은 상품이면 장바구니에 추가
+        # 동일한 상품이 60% 이상의 확률(CONF_TH)로 2초 이상(STABLE_TIME 시간) 유지되었는지 확인
+        elif time.time() - candidate_start_time >= STABLE_TIME:
+                    # 2초동안 유지될정도의 판단 신뢰도를 올리고 잘못 카운팅 되는 것을
+                    # 방지하는 목적 (정확도 향상)
+                    
+            # 직전에 추가했던 상품이 아니면 장바구니 추가
             if last_added_product != current_product:
-
-                cart.append(
-                    current_product
-                )
-
-                # 마지막 추가 상품 저장
+            # 중복 스텍 방지
+                cart.append(current_product)
                 last_added_product = current_product
-
-                # 추가 메시지
                 cart_message = "ITEM ADDED"
-
                 cart_message_product = current_product
-
                 cart_message_time = time.time()
 
 
