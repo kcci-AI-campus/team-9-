@@ -3,7 +3,7 @@ import numpy as np
 import time
 import ai_edge_litert.interpreter as tflite
 
-##변경사항1
+
 # =========================================================
 # 1. MODEL
 # =========================================================
@@ -11,7 +11,7 @@ import ai_edge_litert.interpreter as tflite
 modelPath = "best.tflite"
 
 interpreter = tflite.Interpreter(model_path=modelPath)
-interpreter.allocate_tensors()
+interpreter.allocate_tensors() # 메모리할당
 
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
@@ -31,7 +31,7 @@ print("Output dtype:", output_details[0]["dtype"])
 product_name = {
     0: "Coffee",
     1: "Water",
-    2: "Letbe",
+    2: "Letbe", # 이름 오타 Letbe-> Letsbe
     3: "Cola",
     4: "Pocachip",
     5: "Yukgaejang",
@@ -64,36 +64,36 @@ STABLE_TIME = 2.0
 # 4. CART / STATE
 # =========================================================
 
-cart = []
+cart = [] # 장바구니 물건을 추가하면 리스트에 클래스번호가 추가
 
-candidate_product = None
-candidate_start_time = 0
+candidate_product = None # 카메라에 물건이 보이면 장바구니에 들어갈 후보 
+candidate_start_time = 0 # 후보가 언제부터 보였는지 시간 기록
 
-last_added_product = None
+last_added_product = None #중복방지용 방금 추가된 상품의 클래스 번호를 저장
 
-cart_message = ""
-cart_message_time = 0
-CART_MESSAGE_DURATION = 1.5
+cart_message = "" # 장바구니에 물건이 추가되면 화면에 표시할 메시지
+cart_message_time = 0    
+CART_MESSAGE_DURATION = 1.5 
 
-payment_mode = False
-payment_complete = False
-paid_total = 0
+payment_mode = False # 엔터누르면 True로 바뀌고 결제화면으로 전환
+payment_complete = False #결제화면에서 엔터누르면 True로 바뀌고 결제완료화면으로 전환
+paid_total = 0 # 지불할 금액
 
 
 # =========================================================
 # 5. LETTERBOX
 # =========================================================
 
-def letterbox(image, new_shape=(320, 320)):
+def letterbox(image, new_shape=(320, 320)): #letterbox 함수는 이미지 비율유지, padding을 추가하여 모델 입력 크기에 맞게 조정
 
-    shape = image.shape[:2]
+    shape = image.shape[:2] #원본카메라의 이미지를 가져옴
 
-    ratio = min(
+    ratio = min( #비율 계산 더 작은 비율을 선택하여 이미지가 잘리지 않도록 함
         new_shape[0] / shape[0],
         new_shape[1] / shape[1]
     )
 
-    new_unpad = (
+    new_unpad = (# 
         int(round(shape[1] * ratio)),
         int(round(shape[0] * ratio))
     )
@@ -736,12 +736,22 @@ def drawCartPanel(frame):
     cv2.putText(
         panel,
         "R : RESET",
-        (25, 420),
+        (25, 410),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.45,
         (180, 180, 180),
         1
     )
+
+    cv2.putText(
+            panel,
+            "D : DELETE LAST ITEM",
+            (25, 430),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.45,
+            (180, 180, 180),
+            1
+        )
 
     cv2.putText(
         panel,
@@ -825,7 +835,7 @@ def drawPaymentScreen(frame):
 
     cv2.putText(
         screen,
-        "R : CANCEL",
+        "R : RETURN",
         (250, 390),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.55,
@@ -1038,6 +1048,7 @@ while True:
 
             resetCart()
 
+
             payment_mode = False
 
         elif key == 13:
@@ -1237,7 +1248,10 @@ while True:
         if len(cart) > 0:
 
             payment_mode = True
-
+    # D : 마지막 물건 취소        
+    elif key == ord("d"):  # D 키 누르면 마지막 담긴 물품 삭제
+                if len(cart) > 0:
+                    cart.pop()
 
 # =========================================================
 # 18. CLEAN UP
